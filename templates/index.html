@@ -145,10 +145,15 @@
     padding-right: 20px;
   }
 
+  .file-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
   .file-group input[type="number"] {
     width: 140px;
     padding: 12px 16px;
-    margin-right: 15px;
     border: 2px solid #e5e7eb;
     border-radius: 10px;
     font-size: 14px;
@@ -161,6 +166,24 @@
     outline: none;
     border-color: #667eea;
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  }
+
+  .preview-btn {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    border: none;
+    color: white;
+    padding: 10px 16px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+  }
+
+  .preview-btn:hover {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
   }
 
   .remove-btn {
@@ -179,6 +202,162 @@
     background: linear-gradient(135deg, #dc2626, #b91c1c);
     transform: translateY(-1px);
     box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+  }
+
+  /* PDF Preview Modal Styles */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .modal-overlay.active {
+    display: flex;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .modal-content {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    max-width: 95vw;
+    max-height: 95vh;
+    width: 1100px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+    position: relative;
+  }
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .modal-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #374151;
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 60%;
+  }
+
+  .page-info {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 16px;
+    font-weight: 600;
+    font-size: 13px;
+  }
+
+  .close-btn {
+    background: #ef4444;
+    border: none;
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+  }
+
+  .close-btn:hover {
+    background: #dc2626;
+    transform: scale(1.1);
+  }
+
+  .pdf-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 600px;
+    overflow: hidden;
+  }
+
+  .pdf-canvas {
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    max-width: 100%;
+    max-height: 75vh;
+    object-fit: contain;
+  }
+
+  .pdf-controls {
+    display: flex;
+    gap: 15px;
+    margin-top: 15px;
+    align-items: center;
+  }
+
+  .nav-btn {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border: none;
+    color: white;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 13px;
+  }
+
+  .nav-btn:hover {
+    background: linear-gradient(135deg, #5a67d8, #6b46c1);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+  }
+
+  .nav-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  .loading-spinner {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+  }
+
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f4f6;
+    border-top: 4px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
   }
 
   .file-button {
@@ -367,7 +546,47 @@
 
     .file-group input[type="number"] {
       width: 100%;
-      margin-right: 0;
+    }
+
+    .file-actions {
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .file-actions button {
+      width: 100%;
+    }
+
+    .modal-content {
+      width: 98vw;
+      padding: 15px;
+      height: 95vh;
+    }
+
+    .modal-title {
+      font-size: 1rem;
+      max-width: 50%;
+    }
+
+    .pdf-container {
+      min-height: calc(100vh - 200px);
+    }
+
+    .pdf-canvas {
+      max-height: calc(100vh - 250px);
+    }
+
+    .pdf-controls {
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .nav-btn {
+      flex: 1;
+      min-width: 100px;
+      padding: 8px 12px;
+      font-size: 12px;
     }
   }
 </style>
@@ -394,11 +613,176 @@
   <div id="downloadLinks"></div>
 </div>
 
+<!-- PDF Preview Modal -->
+<div id="pdfModal" class="modal-overlay">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 class="modal-title" id="modalTitle">PDF Önizleme</h3>
+      <div class="page-info" id="pageInfo">1/1</div>
+      <button class="close-btn" onclick="closePdfModal()">×</button>
+    </div>
+    <div class="pdf-container">
+      <div class="loading-spinner" id="loadingSpinner">
+        <div class="spinner"></div>
+      </div>
+      <canvas id="pdfCanvas" class="pdf-canvas" style="display: none;"></canvas>
+      <div class="pdf-controls">
+        <button class="nav-btn" id="prevBtn" onclick="prevPage()">⬅ Önceki</button>
+        <button class="nav-btn" id="nextBtn" onclick="nextPage()">Sonraki ➡</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+
 <script>
   const dropZone = document.getElementById('dropZone');
   const filePicker = document.getElementById('filePicker');
   const fileInputs = document.getElementById('fileInputs');
   const selectedFiles = [];
+
+  // PDF.js configuration
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+
+  let currentPdf = null;
+  let currentPage = 1;
+  let totalPages = 0;
+  let pageRendering = false;
+
+  function showPdfPreview(file) {
+    const modal = document.getElementById('pdfModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const loadingSpinner = document.getElementById('loadingSpinner');
+    const canvas = document.getElementById('pdfCanvas');
+    
+    modalTitle.textContent = file.name;
+    modal.classList.add('active');
+    loadingSpinner.style.display = 'flex';
+    canvas.style.display = 'none';
+    
+    const fileReader = new FileReader();
+    fileReader.onload = function() {
+      const typedArray = new Uint8Array(this.result);
+      
+      pdfjsLib.getDocument(typedArray).promise.then(function(pdf) {
+        currentPdf = pdf;
+        totalPages = pdf.numPages;
+        currentPage = 1;
+        loadingSpinner.style.display = 'none';
+        canvas.style.display = 'block';
+        renderPage(currentPage);
+        updatePageInfo();
+        updateNavButtons();
+      }).catch(function(error) {
+        console.error('PDF yükleme hatası:', error);
+        loadingSpinner.style.display = 'none';
+        alert('PDF dosyası yüklenemedi.');
+        closePdfModal();
+      });
+    };
+    fileReader.readAsArrayBuffer(file);
+  }
+
+  function renderPage(pageNum) {
+    if (pageRendering) return;
+    pageRendering = true;
+    
+    const canvas = document.getElementById('pdfCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    currentPdf.getPage(pageNum).then(function(page) {
+      // Yüksek kalite için daha büyük scale kullan
+      const viewport = page.getViewport({ scale: 2.0 });
+      
+      // Canvas boyutlarını viewport'a göre ayarla
+      canvas.height = viewport.height;
+      canvas.width = viewport.width;
+      
+      // High DPI desteği için canvas'ı scale et
+      const devicePixelRatio = window.devicePixelRatio || 1;
+      const backingStoreRatio = ctx.webkitBackingStorePixelRatio ||
+                               ctx.mozBackingStorePixelRatio ||
+                               ctx.msBackingStorePixelRatio ||
+                               ctx.oBackingStorePixelRatio ||
+                               ctx.backingStorePixelRatio || 1;
+      
+      const ratio = devicePixelRatio / backingStoreRatio;
+      
+      if (devicePixelRatio !== backingStoreRatio) {
+        canvas.width = viewport.width * ratio;
+        canvas.height = viewport.height * ratio;
+        canvas.style.width = viewport.width + 'px';
+        canvas.style.height = viewport.height + 'px';
+        ctx.scale(ratio, ratio);
+      }
+      
+      const renderContext = {
+        canvasContext: ctx,
+        viewport: viewport
+      };
+      
+      // Anti-aliasing için context ayarları
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
+      
+      page.render(renderContext).promise.then(function() {
+        pageRendering = false;
+      });
+    });
+  }
+
+  function updatePageInfo() {
+    document.getElementById('pageInfo').textContent = `${currentPage}/${totalPages}`;
+  }
+
+  function updateNavButtons() {
+    document.getElementById('prevBtn').disabled = currentPage <= 1;
+    document.getElementById('nextBtn').disabled = currentPage >= totalPages;
+  }
+
+  function prevPage() {
+    if (currentPage <= 1) return;
+    currentPage--;
+    renderPage(currentPage);
+    updatePageInfo();
+    updateNavButtons();
+  }
+
+  function nextPage() {
+    if (currentPage >= totalPages) return;
+    currentPage++;
+    renderPage(currentPage);
+    updatePageInfo();
+    updateNavButtons();
+  }
+
+  function closePdfModal() {
+    document.getElementById('pdfModal').classList.remove('active');
+    currentPdf = null;
+    currentPage = 1;
+    totalPages = 0;
+  }
+
+  // Close modal when clicking outside
+  document.getElementById('pdfModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+      closePdfModal();
+    }
+  });
+
+  // Keyboard navigation
+  document.addEventListener('keydown', function(e) {
+    if (document.getElementById('pdfModal').classList.contains('active')) {
+      if (e.key === 'Escape') {
+        closePdfModal();
+      } else if (e.key === 'ArrowLeft') {
+        prevPage();
+      } else if (e.key === 'ArrowRight') {
+        nextPage();
+      }
+    }
+  });
 
   function addFile(file) {
     if (!selectedFiles.some(f => f.name === file.name && f.size === file.size && f.lastModified === file.lastModified)) {
@@ -416,6 +800,15 @@
       pageInput.placeholder = 'Sayfa sınırı (isteğe bağlı)';
       pageInput.min = 1;
 
+      const actionsDiv = document.createElement('div');
+      actionsDiv.className = 'file-actions';
+
+      const previewBtn = document.createElement('button');
+      previewBtn.type = 'button';
+      previewBtn.className = 'preview-btn';
+      previewBtn.textContent = '👁️ Önizle';
+      previewBtn.onclick = () => showPdfPreview(file);
+
       const removeBtn = document.createElement('button');
       removeBtn.type = 'button';
       removeBtn.className = 'remove-btn';
@@ -429,9 +822,12 @@
         }, 300);
       };
 
+      actionsDiv.appendChild(previewBtn);
+      actionsDiv.appendChild(removeBtn);
+
       div.appendChild(fileLabel);
       div.appendChild(pageInput);
-      div.appendChild(removeBtn);
+      div.appendChild(actionsDiv);
       fileInputs.appendChild(div);
     }
   }
