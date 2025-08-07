@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>PDF to PNG Dönüştürücü</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+  
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .container {
+    max-width: 800px;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #f5576c);
+    background-size: 400% 100%;
+    animation: gradientShift 3s ease infinite;
+  }
+
+  @keyframes gradientShift {
+    0%, 100% { background-position: 0% 0%; }
+    50% { background-position: 100% 0%; }
+  }
+
+  h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-align: center;
+    margin-bottom: 30px;
+    letter-spacing: -0.5px;
+  }
+
+  #dropZone {
+    border: 2px dashed #d1d5db;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+    padding: 60px 40px;
+    text-align: center;
+    color: #6b7280;
+    font-weight: 500;
+    border-radius: 16px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    user-select: none;
+    margin-bottom: 30px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #dropZone::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transition: left 0.5s;
+  }
+
+  #dropZone:hover::before {
+    left: 100%;
+  }
+
+  #dropZone.dragover {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+    border-color: #667eea;
+    color: #667eea;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.2);
+  }
+
+  .file-group {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    padding: 20px;
+    margin-bottom: 15px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    animation: slideUp 0.3s ease;
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .file-group:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+  }
+
+  .file-group span {
+    flex: 1;
+    font-weight: 600;
+    color: #374151;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    padding-right: 20px;
+  }
+
+  .file-group input[type="number"] {
+    width: 140px;
+    padding: 12px 16px;
+    margin-right: 15px;
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    background: rgba(255, 255, 255, 0.9);
+    transition: all 0.3s ease;
+  }
+
+  .file-group input[type="number"]:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  }
+
+  .remove-btn {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    border: none;
+    color: white;
+    padding: 10px 16px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+  }
+
+  .remove-btn:hover {
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+  }
+
+  .file-button {
+    display: inline-block;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    padding: 16px 32px;
+    border-radius: 12px;
+    font-weight: 600;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    margin: 0 auto 30px auto;
+    font-size: 16px;
+    border: none;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .file-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+  }
+
+  .file-button:hover {
+    background: linear-gradient(135deg, #5a67d8, #6b46c1);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+  }
+
+  .file-button:hover::before {
+    left: 100%;
+  }
+
+  .convert-btn {
+    background: linear-gradient(135deg, #10b981, #059669);
+    border: none;
+    color: white;
+    padding: 18px 40px;
+    font-size: 18px;
+    font-weight: 700;
+    border-radius: 14px;
+    cursor: pointer;
+    display: block;
+    margin: 30px auto;
+    width: 100%;
+    max-width: 250px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .convert-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+  }
+
+  .convert-btn:hover {
+    background: linear-gradient(135deg, #059669, #047857);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+  }
+
+  .convert-btn:hover::before {
+    left: 100%;
+  }
+
+  .convert-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  h3 {
+    margin-top: 40px;
+    color: #374151;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+  }
+
+  #downloadLinks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+  }
+
+  #downloadLinks a {
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #8b5cf6, #a855f7);
+    color: white;
+    text-decoration: none;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #downloadLinks a::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+  }
+
+  #downloadLinks a:hover {
+    background: linear-gradient(135deg, #7c3aed, #9333ea);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3);
+  }
+
+  #downloadLinks a:hover::before {
+    left: 100%;
+  }
+
+  #fileInputs {
+    max-height: 400px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+    scrollbar-width: thin;
+    scrollbar-color: #d1d5db #f9fafb;
+  }
+
+  #fileInputs::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  #fileInputs::-webkit-scrollbar-track {
+    background: #f9fafb;
+    border-radius: 4px;
+  }
+
+  #fileInputs::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 4px;
+  }
+
+  #fileInputs::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
+  }
+
+  @media (max-width: 768px) {
+    .container {
+      padding: 25px;
+      margin: 10px;
+    }
+
+    h2 {
+      font-size: 2rem;
+    }
+
+    #dropZone {
+      padding: 40px 20px;
+    }
+
+    .file-group {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 15px;
+    }
+
+    .file-group span {
+      padding-right: 0;
+    }
+
+    .file-group input[type="number"] {
+      width: 100%;
+      margin-right: 0;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h2>PDF to PNG Dönüştürücü</h2>
+
+  <div id="dropZone">
+    <div style="font-size: 48px; margin-bottom: 16px; opacity: 0.6;">📄</div>
+    <div style="font-size: 18px; margin-bottom: 8px;">Dosyaları buraya sürükleyip bırakın</div>
+    <div style="font-size: 14px; opacity: 0.7;">veya aşağıdaki butonu kullanarak seçin</div>
+  </div>
+
+  <form id="convertForm">
+    <input type="file" id="filePicker" accept="application/pdf" multiple hidden>
+    <label for="filePicker" class="file-button">📁 Dosya Seç</label>
+    <div id="fileInputs"></div>
+    <button type="submit" class="convert-btn">✨ Dönüştür</button>
+  </form>
+
+  <h3>📥 İndirilebilir Dosyalar</h3>
+  <div id="downloadLinks"></div>
+</div>
+
+<script>
+  const dropZone = document.getElementById('dropZone');
+  const filePicker = document.getElementById('filePicker');
+  const fileInputs = document.getElementById('fileInputs');
+  const selectedFiles = [];
+
+  function addFile(file) {
+    if (!selectedFiles.some(f => f.name === file.name && f.size === file.size && f.lastModified === file.lastModified)) {
+      selectedFiles.push(file);
+
+      const div = document.createElement('div');
+      div.className = 'file-group';
+
+      const fileLabel = document.createElement('span');
+      fileLabel.textContent = `📄 ${file.name}`;
+
+      const pageInput = document.createElement('input');
+      pageInput.type = 'number';
+      pageInput.name = 'page_limits';
+      pageInput.placeholder = 'Sayfa sınırı (isteğe bağlı)';
+      pageInput.min = 1;
+
+      const removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.className = 'remove-btn';
+      removeBtn.textContent = '🗑️ Kaldır';
+      removeBtn.onclick = () => {
+        div.style.animation = 'slideUp 0.3s ease reverse';
+        setTimeout(() => {
+          fileInputs.removeChild(div);
+          const index = selectedFiles.indexOf(file);
+          if (index > -1) selectedFiles.splice(index, 1);
+        }, 300);
+      };
+
+      div.appendChild(fileLabel);
+      div.appendChild(pageInput);
+      div.appendChild(removeBtn);
+      fileInputs.appendChild(div);
+    }
+  }
+
+  filePicker.addEventListener('change', () => {
+    Array.from(filePicker.files).forEach(addFile);
+    filePicker.value = '';
+  });
+
+  dropZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropZone.classList.add('dragover');
+  });
+
+  dropZone.addEventListener('dragleave', (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('dragover');
+  });
+
+  dropZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('dragover');
+    const files = Array.from(e.dataTransfer.files).filter(f => f.type === 'application/pdf');
+    files.forEach(addFile);
+  });
+
+  document.getElementById('convertForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (selectedFiles.length === 0) {
+      alert("Lütfen en az bir PDF dosyası seçin.");
+      return;
+    }
+
+    const convertBtn = document.querySelector('.convert-btn');
+    convertBtn.disabled = true;
+    convertBtn.textContent = '⏳ Dönüştürülüyor...';
+
+    const formData = new FormData();
+    const pageInputs = document.querySelectorAll('input[name="page_limits"]');
+    
+    selectedFiles.forEach((file, idx) => {
+      formData.append('pdf_files', file);
+      formData.append('page_limits', pageInputs[idx].value || '');
+    });
+
+    fetch('/convert', {
+      method: 'POST',
+      body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+      const container = document.getElementById('downloadLinks');
+      container.innerHTML = '';
+      data.urls.forEach(url => {
+        const a = document.createElement('a');
+        a.href = url;
+        a.textContent = `💾 ${url.split('/').pop()}`;
+        a.download = '';
+        container.appendChild(a);
+      });
+      convertBtn.disabled = false;
+      convertBtn.textContent = '✨ Dönüştür';
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('Dönüştürme sırasında bir hata oluştu.');
+      convertBtn.disabled = false;
+      convertBtn.textContent = '✨ Dönüştür';
+    });
+  });
+</script>
+
+</body>
+</html>
