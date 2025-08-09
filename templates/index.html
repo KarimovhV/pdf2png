@@ -746,6 +746,231 @@
       font-size: 12px;
     }
   }
+
+  /* === İlgili Ürünler Bölümü === */
+.related-products-section {
+  background: var(--surface);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 20px 25px; /* Üst-alt padding'i azalttık */
+  margin-bottom: 30px;
+  box-shadow: 0 8px 25px var(--shadow-light);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.related-products-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--gradient-primary);
+  animation: gradientShift 3s ease infinite;
+}
+
+.related-products-section:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 35px var(--shadow);
+}
+
+.related-products-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-align: center;
+  margin-bottom: 20px;
+  margin-top: 0; /* Üstteki boşluğu kaldır */
+  letter-spacing: -0.3px;
+}
+
+.product-recommendation {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  background: var(--bg-container);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 20px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.product-recommendation::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+  transition: left 0.6s;
+}
+
+.product-recommendation:hover::before {
+  left: 100%;
+}
+
+.product-recommendation:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px var(--shadow);
+  border-color: var(--text-primary);
+}
+
+.product-icon {
+  font-size: 2.5rem;
+  background: var(--gradient-primary);
+  border-radius: 12px;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 15px var(--shadow-light);
+  flex-shrink: 0;
+}
+
+.product-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.product-name {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+  letter-spacing: -0.2px;
+}
+
+.product-desc {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.product-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--gradient-primary);
+  color: white;
+  text-decoration: none;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px var(--shadow-light);
+  align-self: flex-start;
+  position: relative;
+  overflow: hidden;
+}
+
+.product-link::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.product-link:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px var(--shadow);
+}
+
+.product-link:hover::before {
+  left: 100%;
+}
+
+.link-icon {
+  font-size: 1em;
+  transition: transform 0.3s ease;
+}
+
+.product-link:hover .link-icon {
+  transform: scale(1.1);
+}
+
+/* === Mobil Responsive === */
+@media (max-width: 768px) {
+  .related-products-section {
+    padding: 16px; /* Mobilde daha da az padding */
+    margin-bottom: 25px;
+  }
+
+  .related-products-title {
+    font-size: 1.1rem;
+    margin-bottom: 14px; /* Mobilde daha az margin */
+  }
+
+  .product-recommendation {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 16px;
+    padding: 18px;
+  }
+
+  .product-icon {
+    font-size: 2rem;
+    width: 50px;
+    height: 50px;
+  }
+
+  .product-name {
+    font-size: 1.1rem;
+  }
+
+  .product-desc {
+    font-size: 0.875rem;
+  }
+
+  .product-link {
+    padding: 10px 16px;
+    font-size: 0.85rem;
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .related-products-section {
+    padding: 16px 12px;
+  }
+
+  .product-recommendation {
+    padding: 16px;
+  }
+
+  .product-icon {
+    font-size: 1.8rem;
+    width: 45px;
+    height: 45px;
+  }
+
+  .product-name {
+    font-size: 1rem;
+  }
+
+  .product-desc {
+    font-size: 0.8125rem;
+  }
+}
 </style>
 </head>
 <body>
@@ -761,6 +986,21 @@
   <div class="contact-info">
     🔗 Eğer eklenmesini istediğiniz bir dönüştürme varsa lütfen site sahibi ile iletişim kurun:<br>
     <strong>Website</strong> - <a href="https://www.karimov.info" target="_blank">www.karimov.info</a>
+  </div>
+
+  <div class="related-products-section">
+  <h3 class="related-products-title">🔗 İlgili Ürünlerimiz</h3>
+  <div class="product-recommendation">
+    <div class="product-icon">📱</div>
+    <div class="product-info">
+      <h4 class="product-name">QR Kod Üreticisi</h4>
+      <p class="product-desc">URL, metin ve iletişim bilgileri için anında QR kodları oluşturun. Hiçbir veri saklanmaz, tamamen ücretsiz.</p>
+      <a href="https://qr-code-generator-karimov.netlify.app" target="_blank" rel="noopener noreferrer" class="product-link">
+        <span class="link-icon">🔗</span>
+        QR Kod Sitesini Ziyaret Et
+      </a>
+      </div>
+    </div>
   </div>
 
   <div id="dropZone">
