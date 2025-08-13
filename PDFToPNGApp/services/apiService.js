@@ -1,7 +1,7 @@
 import { Alert } from 'react-native';
 
 // Backend URL'inizi buraya ekleyin
-const BASE_URL = 'YOUR_WEBSITE_URL'; // Örnek: 'https://your-backend.herokuapp.com'
+const BASE_URL = 'https://pdf2png-ihrx.onrender.com'; // Örnek: 'https://your-backend.herokuapp.com'
 
 class ApiService {
   constructor() {
